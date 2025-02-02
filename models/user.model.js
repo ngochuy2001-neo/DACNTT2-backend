@@ -14,7 +14,7 @@ const UserSchema = new Schema({
     unique: true,
   },
   password: String,
-  is_admin: Boolean,
+  is_admin: { type: Boolean, default: false },
   create_at: {
     type: Date,
     default: Date.now,
