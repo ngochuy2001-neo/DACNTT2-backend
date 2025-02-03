@@ -30,12 +30,12 @@ class UserController {
       const token = jwt.sign(
         {
           id: newUser._id,
-          phone_number: phone_number,
-          is_admin: user.is_admin,
-          is_shipper: user.is_shipper,
-          name: user.user_name,
-          phone_number: user.phone_number,
-          email: user.email,
+          phone_number: newUser.phone_number,
+          is_admin: newUser.is_admin,
+          is_shipper: newUser.is_shipper,
+          name: newUser.user_name,
+          phone_number: newUser.phone_number,
+          email: newUser.email,
         },
         "DACNTT2",
         { expiresIn: "5d" }

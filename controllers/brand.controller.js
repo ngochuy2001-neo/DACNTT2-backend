@@ -1,4 +1,4 @@
-const Brand = require("../models/brand.model");
+  const Brand = require("../models/brand.model");
 
 class BrandController {
   async show(req, res) {
