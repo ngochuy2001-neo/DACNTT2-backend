@@ -9,12 +9,13 @@ class AddressController {
 
       const user = await authentication(token);
 
-      const { city, district, avenue, specific_address } = req.body;
+      const { city, district, ward, avenue, specific_address } = req.body;
 
       const newAddress = new Address({
         user_id: user._id,
         city,
         district,
+        ward,
         avenue,
         specific_address,
       });
@@ -56,10 +57,10 @@ class AddressController {
       const user = await authentication(token);
 
       const updatedData = req.body;
-      updatedData.update_at = Date.now(); // Cập nhật thời gian
+      updatedData.update_at = Date.now();
 
       const updatedAddress = await Address.findOneAndUpdate(
-        { user_id: user._id }, // ❗ Sửa từ `findByIdAndUpdate` thành `findOneAndUpdate`
+        { user_id: user._id },
         updatedData,
         { new: true }
       );
@@ -84,13 +85,17 @@ class AddressController {
 
       const user = await authentication(token);
 
-      const deletedAddress = await Address.findOneAndDelete({
-        user_id: user._id,
-      });
+      const { id } = req.params;
+      if (!id) return res.status(400).json({ message: "Thiếu ID địa chỉ" });
 
-      if (!deletedAddress) {
-        return res.status(404).json({ message: "Không tìm thấy địa chỉ" });
+      const address = await Address.findOne({ _id: id, user_id: user._id });
+      if (!address) {
+        return res
+          .status(404)
+          .json({ message: "Địa chỉ không tồn tại hoặc không thuộc về bạn" });
       }
+
+      await Address.deleteOne({ _id: id });
 
       res.json({ message: "Xóa địa chỉ thành công" });
     } catch (error) {
