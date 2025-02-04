@@ -3,9 +3,12 @@ const authentication = require("../utils/authentication");
 
 class AddressController {
   async createAddress(req, res) {
-    const token = req.headers.authorization.split(" ")[1]
-    const user = await authentication(token);
     try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) return res.status(401).json({ message: "Thiếu token" });
+
+      const user = await authentication(token);
+
       const { city, district, avenue, specific_address } = req.body;
 
       const newAddress = new Address({
@@ -17,21 +20,26 @@ class AddressController {
       });
 
       await newAddress.save();
-      res.status(201).json({ message: "Thêm địa chỉ thành công", address: newAddress });
+      res
+        .status(201)
+        .json({ message: "Thêm địa chỉ thành công", address: newAddress });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
 
   async getUserAddresses(req, res) {
-    const token = req.headers.authorization.split(" ")[1]
-    const user = await authentication(token);
-    console.log(user)
     try {
-      const addresses = await Address.find({ user_id: user._id });
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) return res.status(401).json({ message: "Thiếu token" });
 
+      const user = await authentication(token);
+
+      const addresses = await Address.find({ user_id: user._id });
       if (addresses.length === 0) {
-        return res.status(404).json({ message: "Người dùng chưa có địa chỉ nào" });
+        return res
+          .status(404)
+          .json({ message: "Người dùng chưa có địa chỉ nào" });
       }
 
       res.json({ addresses });
@@ -41,30 +49,44 @@ class AddressController {
   }
 
   async updateAddress(req, res) {
-    const token = req.headers.authorization.split(" ")[1]
-    const user = authentication(token);
     try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) return res.status(401).json({ message: "Thiếu token" });
+
+      const user = await authentication(token);
+
       const updatedData = req.body;
       updatedData.update_at = Date.now(); // Cập nhật thời gian
 
-      const updatedAddress = await Address.findByIdAndUpdate({user_id: user._id}, updatedData, { new: true });
+      const updatedAddress = await Address.findOneAndUpdate(
+        { user_id: user._id }, // ❗ Sửa từ `findByIdAndUpdate` thành `findOneAndUpdate`
+        updatedData,
+        { new: true }
+      );
 
       if (!updatedAddress) {
         return res.status(404).json({ message: "Không tìm thấy địa chỉ" });
       }
 
-      res.json({ message: "Cập nhật địa chỉ thành công", address: updatedAddress });
+      res.json({
+        message: "Cập nhật địa chỉ thành công",
+        address: updatedAddress,
+      });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
 
   async deleteAddress(req, res) {
-    const token = req.headers.authorization.split(" ")[1]
-    const user = authentication(token);
     try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) return res.status(401).json({ message: "Thiếu token" });
 
-      const deletedAddress = await Address.findByIdAndDelete({user_id: user._id});
+      const user = await authentication(token);
+
+      const deletedAddress = await Address.findOneAndDelete({
+        user_id: user._id,
+      });
 
       if (!deletedAddress) {
         return res.status(404).json({ message: "Không tìm thấy địa chỉ" });

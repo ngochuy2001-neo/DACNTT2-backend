@@ -8,6 +8,7 @@ const AddressSchema = Schema({
   },
   city: String,
   district: String,
+  ward: String,
   avenue: String,
   specific_address: String,
   create_at: {
