@@ -2,81 +2,118 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const LaptopVariantFieldSchema = new Schema({
-  part_number: String,
-  mfg_year: Number,
-  origin: String,
-  weight: Number,
-  color: String,
-  material: String,
-  max_ram_up: Number,
-  max_drive_up: Number,
+  part_number: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
+  mfg_year: {
+    type: Number,
+    min: 2000, // Giới hạn năm sản xuất
+    max: new Date().getFullYear(),
+  },
+  origin: {
+    type: String,
+    trim: true,
+  },
+  weight: {
+    type: Number,
+    min: 0, // Trọng lượng không thể âm
+  },
+  color: {
+    type: String,
+    trim: true,
+  },
+  material: {
+    type: String,
+    trim: true,
+  },
+  max_ram_up: {
+    type: Number,
+    min: 1, // Giới hạn dung lượng RAM tối thiểu
+  },
+  max_drive_up: {
+    type: Number,
+    min: 1, // Giới hạn dung lượng ổ cứng tối thiểu
+  },
   whd_size: {
-    width: Number,
-    height: Number,
-    depth: Number,
+    width: { type: Number, min: 0 },
+    height: { type: Number, min: 0 },
+    depth: { type: Number, min: 0 },
   },
   cpu: {
-    brand: String,
-    name: String,
-    model: String,
-    min_rate: String,
+    brand: { type: String, trim: true },
+    name: { type: String, trim: true },
+    model: { type: String, trim: true },
+    min_rate: { type: String, trim: true },
   },
   vga: {
-    brand: String,
-    name: String,
-    model: String,
+    brand: { type: String, trim: true },
+    name: { type: String, trim: true },
+    model: { type: String, trim: true },
   },
   ram: {
-    type: {
-      type: String,
-    },
-    storage: Number,
-    slots: Number,
+    type: { type: String, trim: true },
+    storage: { type: Number, min: 1 },
+    slots: { type: Number, min: 1, default: 1 },
   },
   drive: {
-    type: {
-      type: String,
-    },
-    model: String,
-    storage: Number,
-    slots: Number,
+    type: { type: String, trim: true },
+    model: { type: String, trim: true },
+    storage: { type: Number, min: 1 },
+    slots: { type: Number, min: 1, default: 1 },
   },
   screen: {
-    size: Number,
-    type: {
-      type: String,
-    },
-    resolution: Number,
-    refresh_rate: Number,
-    color_rate: String,
-    ratio: String,
+    size: { type: Number, min: 10 }, // Laptop màn nhỏ nhất khoảng 10 inch
+    type: { type: String, trim: true },
+    resolution: { type: Number, min: 720 }, // Độ phân giải thấp nhất là 720p
+    refresh_rate: { type: Number, min: 30, max: 240 }, // Giới hạn tần số quét
+    color_rate: { type: String, trim: true },
+    ratio: { type: String, trim: true },
   },
   port: {
-    wifi: String,
-    bluetooth: String,
-    webcam: String,
-    usb_type1: String,
-    usb_number1: Number,
-    usb_type2: String,
-    usb_number2: Number,
-    hdmi_type: String,
-    hdmi_number: String,
-    cardreader_number: Number,
-    jack35mm_number: Number,
+    wifi: { type: String, trim: true },
+    bluetooth: { type: String, trim: true },
+    webcam: { type: String, trim: true },
+    usb_type1: { type: String, trim: true },
+    usb_number1: { type: Number, min: 0, default: 0 },
+    usb_type2: { type: String, trim: true },
+    usb_number2: { type: Number, min: 0, default: 0 },
+    hdmi_type: { type: String, trim: true },
+    hdmi_number: { type: Number, min: 0, default: 0 },
+    cardreader_number: { type: Number, min: 0, default: 0 },
+    jack35mm_number: { type: Number, min: 0, default: 1 }, // Mặc định có 1 cổng audio
   },
   os: {
-    name: { type: String },
-    version: { type: String },
+    name: { type: String, trim: true },
+    version: { type: String, trim: true },
   },
   keyboard: {
-    type: String,
-    led: String,
-    numbpad: Boolean,
-    touchpad: String,
+    type: { type: String, trim: true },
+    led: { type: String, trim: true },
+    numbpad: { type: Boolean, default: false }, // Mặc định không có bàn phím số
+    touchpad: { type: String, trim: true },
   },
   power: {
-    capability: { type: Number },
-    supply: { type: Number },
+    capability: { type: Number, min: 10 }, // Dung lượng pin tối thiểu 10Wh
+    supply: { type: Number, min: 30 }, // Công suất sạc tối thiểu 30W
   },
-  gears: [{ type: String }],
+  gears: [{ type: String, trim: true }],
+  created_at: {
+    type: Date,
+    default: Date.now,
+  },
+  updated_at: {
+    type: Date,
+    default: Date.now,
+  },
 });
+
+// Middleware tự động cập nhật `updated_at` khi chỉnh sửa dữ liệu
+LaptopVariantFieldSchema.pre("save", function (next) {
+  this.updated_at = Date.now();
+  next();
+});
+
+module.exports = mongoose.model("LaptopVariantField", LaptopVariantFieldSchema);

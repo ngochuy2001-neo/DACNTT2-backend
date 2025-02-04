@@ -11,19 +11,36 @@ const UserSchema = new Schema({
   },
   email: {
     type: String,
-    unique: true,
   },
   password: String,
-  is_admin: { type: Boolean, default: false },
+  is_admin: {
+    type: Boolean,
+    default: false,
+  },
   create_at: {
     type: Date,
     default: Date.now,
   },
-  is_shipper: Boolean,
+  is_shipper: {
+    type: Boolean,
+    default: false,
+  },
   update_at: {
     type: Date,
     default: Date.now,
   },
+});
+
+UserSchema.pre("save", function (next) {
+  if (this.isModified()) {
+    this.update_at = Date.now();
+  }
+  next();
+});
+
+UserSchema.pre("findOneAndUpdate", function (next) {
+  this.set({ update_at: Date.now() });
+  next();
 });
 
 module.exports = mongoose.model("User", UserSchema);
