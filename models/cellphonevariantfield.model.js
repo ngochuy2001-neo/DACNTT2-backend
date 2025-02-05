@@ -80,7 +80,7 @@ const CellphoneVariantFieldSchema = new Schema(
     mobile_gears: { type: [String], required: true },
   },
   {
-    timestamps: true, // Tự động thêm create_at và update_at
+    timestamps: true, 
   }
 );
 

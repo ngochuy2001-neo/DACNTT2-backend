@@ -1,12 +1,19 @@
 const mongoose = require("mongoose");
 
-async function connect() {
+const connect = async () => {
   try {
-    await mongoose.connect(process.env.DATABASE_LOCAL_URL);
-    console.log("Connect database successfully")
+    await mongoose.connect(
+      "mongodb+srv://<username>:<password>@<cluster>.mongodb.net/dacntt2",
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      }
+    );
+    console.log("Kết nối MongoDB thành công");
   } catch (error) {
-    console.log(error);
+    console.error("Lỗi kết nối MongoDB:", error);
+    process.exit(1);
   }
-}
+};
 
-module.exports = {connect}
+module.exports = { connect };

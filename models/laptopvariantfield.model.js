@@ -10,7 +10,7 @@ const LaptopVariantFieldSchema = new Schema({
   },
   mfg_year: {
     type: Number,
-    min: 2000, // Giới hạn năm sản xuất
+    min: 2000, 
     max: new Date().getFullYear(),
   },
   origin: {
@@ -19,7 +19,7 @@ const LaptopVariantFieldSchema = new Schema({
   },
   weight: {
     type: Number,
-    min: 0, // Trọng lượng không thể âm
+    min: 0, 
   },
   color: {
     type: String,
@@ -31,11 +31,11 @@ const LaptopVariantFieldSchema = new Schema({
   },
   max_ram_up: {
     type: Number,
-    min: 1, // Giới hạn dung lượng RAM tối thiểu
+    min: 1, 
   },
   max_drive_up: {
     type: Number,
-    min: 1, // Giới hạn dung lượng ổ cứng tối thiểu
+    min: 1, 
   },
   whd_size: {
     width: { type: Number, min: 0 },
@@ -65,10 +65,10 @@ const LaptopVariantFieldSchema = new Schema({
     slots: { type: Number, min: 1, default: 1 },
   },
   screen: {
-    size: { type: Number, min: 10 }, // Laptop màn nhỏ nhất khoảng 10 inch
+    size: { type: Number, min: 10 }, 
     type: { type: String, trim: true },
-    resolution: { type: Number, min: 720 }, // Độ phân giải thấp nhất là 720p
-    refresh_rate: { type: Number, min: 30, max: 240 }, // Giới hạn tần số quét
+    resolution: { type: Number, min: 720 }, 
+    refresh_rate: { type: Number, min: 30, max: 240 }, 
     color_rate: { type: String, trim: true },
     ratio: { type: String, trim: true },
   },
@@ -83,7 +83,7 @@ const LaptopVariantFieldSchema = new Schema({
     hdmi_type: { type: String, trim: true },
     hdmi_number: { type: Number, min: 0, default: 0 },
     cardreader_number: { type: Number, min: 0, default: 0 },
-    jack35mm_number: { type: Number, min: 0, default: 1 }, // Mặc định có 1 cổng audio
+    jack35mm_number: { type: Number, min: 0, default: 1 }, 
   },
   os: {
     name: { type: String, trim: true },
@@ -92,12 +92,12 @@ const LaptopVariantFieldSchema = new Schema({
   keyboard: {
     type: { type: String, trim: true },
     led: { type: String, trim: true },
-    numbpad: { type: Boolean, default: false }, // Mặc định không có bàn phím số
+    numbpad: { type: Boolean, default: false }, 
     touchpad: { type: String, trim: true },
   },
   power: {
-    capability: { type: Number, min: 10 }, // Dung lượng pin tối thiểu 10Wh
-    supply: { type: Number, min: 30 }, // Công suất sạc tối thiểu 30W
+    capability: { type: Number, min: 10 }, 
+    supply: { type: Number, min: 30 }, 
   },
   gears: [{ type: String, trim: true }],
   created_at: {
@@ -110,7 +110,6 @@ const LaptopVariantFieldSchema = new Schema({
   },
 });
 
-// Middleware tự động cập nhật `updated_at` khi chỉnh sửa dữ liệu
 LaptopVariantFieldSchema.pre("save", function (next) {
   this.updated_at = Date.now();
   next();
